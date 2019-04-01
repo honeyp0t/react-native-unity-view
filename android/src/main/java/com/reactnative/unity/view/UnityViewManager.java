@@ -76,7 +76,7 @@ public class UnityViewManager extends SimpleViewManager<UnityView> implements Li
     @Override
     public void onHostDestroy() {
         if (UnityUtils.isUnityReady()) {
-            UnityUtils.getPlayer().quit();
+            UnityUtils.quit();
         }
     }
 

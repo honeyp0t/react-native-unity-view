@@ -2,6 +2,19 @@
 
 Integrate unity3d within a React Native app. Add a react native component to show unity. Works on both iOS and Android.
 
+## Fork Info
+
+When pressing the "back" button on Android devices the app goes into a background state where the JNI connection goes stale.
+When attempting to launch the app again with the same stale connection you may get an exception saying
+```
+No implementation found for void com.unity3d.player.UnityPlayer.nativeRestartActivityIndicator() (tried Java_com_unity3d_player_UnityPlayer_nativeRestartActivityIndicator__)
+..
+```
+
+In an attempt to fix this, I unset the unity player when `onHostDestroy()` is called, so that it has to be recreated next time.
+
+In order to get this working you will also want to make sure that your react app recreates the Unity context after being in the background, by e.g. calling `UnityModule.createUnity()`.
+
 ## Example
 
 See [react-native-unity-demo](https://github.com/f111fei/react-native-unity-demo)
