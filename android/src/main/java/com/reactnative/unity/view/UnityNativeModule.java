@@ -21,7 +21,18 @@ public class UnityNativeModule extends ReactContextBaseJavaModule implements Uni
 
     @ReactMethod
     public void isReady(Promise promise) {
-        promise.resolve(UnityUtils.isUnityReady());
+        for (int i = 0; i < 5; i++) {
+            if (UnityUtils.isUnityReady()) {
+                promise.resolve(true);
+                return;
+            }
+            try {
+                Thread.sleep(200L);
+            } catch (Exception e) {
+                // sux to be us
+            }
+        }
+        promise.resolve(false);
     }
 
     @ReactMethod
