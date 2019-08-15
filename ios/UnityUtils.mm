@@ -156,7 +156,9 @@ static BOOL _isUnityReady = NO;
         [UnityUtils listenAppState];
 
         // Make react native window key window again (changes from keywindow when unity initializes)
-        [reactNativeWindow makeKeyWindow];
+        dispatch_after(dispatch_time(DISPATCH_TIME_NOW, (int64_t)(100 * NSEC_PER_MSEC)), dispatch_get_main_queue(), ^{
+            [reactNativeWindow makeKeyWindow];
+        });
     });
 }
 
