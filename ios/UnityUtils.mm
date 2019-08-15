@@ -144,8 +144,9 @@ static BOOL _isUnityReady = NO;
         UIApplication* application = [UIApplication sharedApplication];
         
         // Always keep RN window in top
-        application.keyWindow.windowLevel = UIWindowLevelNormal + 1;
-        
+        UIWindow* reactNativeWindow = application.keyWindow;
+        reactNativeWindow.windowLevel = UIWindowLevelNormal + 1;
+
         InitUnity();
         
         UnityAppController *controller = GetAppController();
@@ -153,6 +154,9 @@ static BOOL _isUnityReady = NO;
         [controller applicationDidBecomeActive:application];
         
         [UnityUtils listenAppState];
+
+        // Make react native window key window again (changes from keywindow when unity initializes)
+        [reactNativeWindow makeKeyWindow];
     });
 }
 
