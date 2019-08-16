@@ -1,4 +1,4 @@
-import MessageHandler from "./MessageHandler";
+import MessageHandler from './MessageHandler';
 export interface UnityViewMessage {
     name: string;
     data: any;
@@ -33,6 +33,10 @@ export interface UnityModule {
      * Pause the unity player
      */
     resume(): void;
+    /**
+     * Sets the react native UIWindow as key window
+     */
+    setKeyWindow(): void;
     /**
      * Receive string and json message from unity.
      */

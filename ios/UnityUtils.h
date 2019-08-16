@@ -19,6 +19,8 @@ void UnityPauseCommand();
 
 void UnityResumeCommand();
 
+void SetKeyWindow();
+
 #ifdef __cplusplus
 } // extern "C"
 #endif

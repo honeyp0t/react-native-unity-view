@@ -74,6 +74,20 @@ extern "C" void UnityResumeCommand()
     });
 }
 
+extern "C" void SetKeyWindow()
+{
+    dispatch_async(dispatch_get_main_queue(), ^{
+        UIApplication* application = [UIApplication sharedApplication];
+        for(UIWindow *window in application.windows) { 
+            if(window.tag == 42) {
+                [window makeKeyWindow];
+                break;
+            }
+
+        }
+    });
+}
+
 @implementation UnityUtils
 
 static NSHashTable* mUnityEventListeners = [NSHashTable weakObjectsHashTable];
@@ -146,6 +160,7 @@ static BOOL _isUnityReady = NO;
         // Always keep RN window in top
         UIWindow* reactNativeWindow = application.keyWindow;
         reactNativeWindow.windowLevel = UIWindowLevelNormal + 1;
+        reactNativeWindow.tag = 42;
 
         InitUnity();
         
@@ -156,9 +171,8 @@ static BOOL _isUnityReady = NO;
         [UnityUtils listenAppState];
 
         // Make react native window key window again (changes from keywindow when unity initializes)
-        dispatch_after(dispatch_time(DISPATCH_TIME_NOW, (int64_t)(100 * NSEC_PER_MSEC)), dispatch_get_main_queue(), ^{
-            [reactNativeWindow makeKeyWindow];
-        });
+        [reactNativeWindow makeKeyWindow];
+
     });
 }
 

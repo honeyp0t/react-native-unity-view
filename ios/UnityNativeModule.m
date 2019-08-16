@@ -60,6 +60,11 @@ RCT_EXPORT_METHOD(resume)
     UnityResumeCommand();
 }
 
+RCT_EXPORT_METHOD(setKeyWindow)
+{
+    SetKeyWindow();
+}
+
 - (void)onMessage:(NSString *)message {
 #pragma clang diagnostic push
 #pragma clang diagnostic ignored "-Wdeprecated-declarations"

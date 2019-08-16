@@ -114,12 +114,13 @@ var UnityModuleImpl = /** @class */ (function () {
             if (message.callBack) {
                 waitCallbackMessageMap[id] = message;
             }
-            this.postMessage('UnityMessageManager', 'onRNMessage', MessageHandler_1.UnityMessagePrefix + JSON.stringify({
-                id: id,
-                seq: message.callBack ? 'start' : '',
-                name: message.name,
-                data: message.data
-            }));
+            this.postMessage('UnityMessageManager', 'onRNMessage', MessageHandler_1.UnityMessagePrefix +
+                JSON.stringify({
+                    id: id,
+                    seq: message.callBack ? 'start' : '',
+                    name: message.name,
+                    data: message.data
+                }));
         }
     };
     UnityModuleImpl.prototype.postMessage = function (gameObject, methodName, message) {
@@ -130,6 +131,11 @@ var UnityModuleImpl = /** @class */ (function () {
     };
     UnityModuleImpl.prototype.resume = function () {
         UnityNativeModule.resume();
+    };
+    UnityModuleImpl.prototype.setKeyWindow = function () {
+        if (react_native_1.Platform.OS === 'ios') {
+            UnityNativeModule.setKeyWindow();
+        }
     };
     UnityModuleImpl.prototype.addMessageListener = function (listener) {
         var id = this.getHandleId();
