@@ -1,5 +1,6 @@
 package com.reactnative.unity.view;
 
+import android.app.Activity;
 import com.facebook.react.bridge.Promise;
 import com.facebook.react.bridge.ReactApplicationContext;
 import com.facebook.react.bridge.ReactContext;
@@ -35,9 +36,28 @@ public class UnityNativeModule extends ReactContextBaseJavaModule implements Uni
         promise.resolve(false);
     }
 
+    /** 
+    *   Tries to get the current activity in a safe way. Due to a bug in RN getCurrentActivity can return null if called from componentDidMount.
+    *   See https://github.com/facebook/react-native/issues/18345
+    *   The issue was easy to reproduce by exiting the app by pressing back button on android backing out of app and the restarting it.    
+    */
+    public Activity getCurrentActivitySafe() {
+        for (int i = 0; i < 10; i++) {
+            Activity activity = getCurrentActivity();          
+            if(activity != null) {
+                return activity;
+            }          
+            try {
+                Thread.sleep(200L);
+            } catch (Exception e) {
+            }
+        }
+        return null;
+    }
+
     @ReactMethod
     public void createUnity(final Promise promise) {
-        UnityUtils.createPlayer(getCurrentActivity(), new UnityUtils.CreateCallback() {
+        UnityUtils.createPlayer(getCurrentActivitySafe(), new UnityUtils.CreateCallback() {
             @Override
             public void onReady() {
                 promise.resolve(true);
