@@ -16,7 +16,7 @@ export default class UnityView extends React.Component<UnityViewProps> {
     static propTypes: any;
     private handle;
     constructor(props: any);
-    componentWillMount(): void;
+    UNSAFE_componentWillMount(): void;
     componentWillUnmount(): void;
     /**
      * [Deprecated] Use `UnityModule.pause` instead.

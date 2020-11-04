@@ -39,7 +39,7 @@ var UnityView = /** @class */ (function (_super) {
     function UnityView(props) {
         return _super.call(this, props) || this;
     }
-    UnityView.prototype.componentWillMount = function () {
+    UnityView.prototype.UNSAFE_componentWillMount = function () {
         var _this = this;
         this.handle = UnityModule_1.UnityModule.addMessageListener(function (message) {
             if (_this.props.onUnityMessage && message instanceof MessageHandler_1["default"]) {
@@ -49,11 +49,9 @@ var UnityView = /** @class */ (function (_super) {
                 _this.props.onMessage(message);
             }
         });
-        console.log('rn unity view mounted');
     };
     UnityView.prototype.componentWillUnmount = function () {
         UnityModule_1.UnityModule.removeMessageListener(this.handle);
-        console.log('rn unity view unmount');
     };
     /**
      * [Deprecated] Use `UnityModule.pause` instead.

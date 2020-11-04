@@ -30,7 +30,7 @@ export default class UnityView extends React.Component<UnityViewProps> {
         super(props);
     }
 
-    public componentWillMount() {
+    public UNSAFE_componentWillMount() {
         this.handle = UnityModule.addMessageListener(message => {
             if (this.props.onUnityMessage && message instanceof MessageHandler) {
                 this.props.onUnityMessage(message);
