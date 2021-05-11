@@ -1,9 +1,10 @@
 "use strict";
 var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, generator) {
+    function adopt(value) { return value instanceof P ? value : new P(function (resolve) { resolve(value); }); }
     return new (P || (P = Promise))(function (resolve, reject) {
         function fulfilled(value) { try { step(generator.next(value)); } catch (e) { reject(e); } }
         function rejected(value) { try { step(generator["throw"](value)); } catch (e) { reject(e); } }
-        function step(result) { result.done ? resolve(result.value) : new P(function (resolve) { resolve(result.value); }).then(fulfilled, rejected); }
+        function step(result) { result.done ? resolve(result.value) : adopt(result.value).then(fulfilled, rejected); }
         step((generator = generator.apply(thisArg, _arguments || [])).next());
     });
 };
@@ -35,9 +36,11 @@ var __generator = (this && this.__generator) || function (thisArg, body) {
     }
 };
 exports.__esModule = true;
+exports.UnityModule = void 0;
 var react_native_1 = require("react-native");
 var MessageHandler_1 = require("./MessageHandler");
 var UnityNativeModule = react_native_1.NativeModules.UnityNativeModule;
+var Emitter = new react_native_1.NativeEventEmitter(UnityNativeModule);
 var sequence = 0;
 function generateId() {
     sequence = sequence + 1;
@@ -73,7 +76,7 @@ var UnityModuleImpl = /** @class */ (function () {
         var _this = this;
         this.stringListeners = {};
         this.unityMessageListeners = {};
-        react_native_1.DeviceEventEmitter.addListener('onUnityMessage', function (message) {
+        Emitter.addListener('onUnityMessage', function (message) {
             var result = handleMessage(message);
             if (result instanceof MessageHandler_1["default"]) {
                 Object.values(_this.unityMessageListeners).forEach(function (listener) {

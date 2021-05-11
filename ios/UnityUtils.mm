@@ -1,10 +1,7 @@
-#include "RegisterMonoModules.h"
-#include "RegisterFeatures.h"
 #include <csignal>
 #import <UIKit/UIKit.h>
-#import "UnityInterface.h"
 #import "UnityUtils.h"
-#import "UnityAppController.h"
+
 
 // Hack to work around iOS SDK 4.3 linker problem
 // we need at least one __TEXT, __const section entry in main application .o files
@@ -18,6 +15,8 @@ char** g_argv;
 
 void UnityInitTrampoline();
 
+UnityFramework* ufw;
+
 extern "C" void InitArgs(int argc, char* argv[])
 {
     g_argc = argc;
@@ -29,6 +28,24 @@ extern "C" bool UnityIsInited()
     return unity_inited;
 }
 
+UnityFramework* UnityFrameworkLoad()
+{
+    NSString* bundlePath = nil;
+    bundlePath = [[NSBundle mainBundle] bundlePath];
+    bundlePath = [bundlePath stringByAppendingString: @"/Frameworks/UnityFramework.framework"];
+
+    NSBundle* bundle = [NSBundle bundleWithPath: bundlePath];
+    if ([bundle isLoaded] == false) [bundle load];
+
+    UnityFramework* ufw = [bundle.principalClass getInstance];
+    if (![ufw appController])
+    {
+        // unity is not initialized
+        [ufw setExecuteHeader: &_mh_execute_header];
+    }
+    return ufw;
+}
+
 extern "C" void InitUnity()
 {
     if (unity_inited) {
@@ -36,41 +53,37 @@ extern "C" void InitUnity()
     }
     unity_inited = true;
 
-    UnityInitStartupTime();
+    ufw = UnityFrameworkLoad();
+
+    [ufw setDataBundleId: "com.unity3d.framework"];
+
+    [ufw runEmbeddedWithArgc:g_argc argv:g_argv appLaunchOpts:nil];
     
-    @autoreleasepool
-    {
-        UnityInitTrampoline();
-        UnityInitRuntime(g_argc, g_argv);
-        
-        RegisterMonoModules();
-        NSLog(@"-> registered mono modules %p\n", &constsection);
-        RegisterFeatures();
-        
-        // iOS terminates open sockets when an application enters background mode.
-        // The next write to any of such socket causes SIGPIPE signal being raised,
-        // even if the request has been done from scripting side. This disables the
-        // signal and allows Mono to throw a proper C# exception.
-        std::signal(SIGPIPE, SIG_IGN);
+    if ([ufw appController]) {
+        [[ufw appController] setUnityMessageHandler:^(const char *message) {
+            [UnityUtils onUnityMessage:message];
+        }];
     }
 }
 
 extern "C" void UnityPostMessage(NSString* gameObject, NSString* methodName, NSString* message)
 {
-    UnitySendMessage([gameObject UTF8String], [methodName UTF8String], [message UTF8String]);
+    dispatch_async(dispatch_get_main_queue(), ^{
+        [ufw sendMessageToGOWithName:[gameObject UTF8String] functionName:[methodName UTF8String] message:[message UTF8String]];
+    });
 }
 
 extern "C" void UnityPauseCommand()
 {
     dispatch_async(dispatch_get_main_queue(), ^{
-        UnityPause(1);
+        [ufw pause:true];
     });
 }
 
 extern "C" void UnityResumeCommand()
 {
     dispatch_async(dispatch_get_main_queue(), ^{
-        UnityPause(0);
+        [ufw pause:false];
     });
 }
 
@@ -78,7 +91,7 @@ extern "C" void SetKeyWindow()
 {
     dispatch_async(dispatch_get_main_queue(), ^{
         UIApplication* application = [UIApplication sharedApplication];
-        for(UIWindow *window in application.windows) { 
+        for(UIWindow *window in application.windows) {
             if(window.tag == 42) {
                 [window makeKeyWindow];
                 break;
@@ -98,15 +111,30 @@ static BOOL _isUnityReady = NO;
     return _isUnityReady;
 }
 
++ (UnityAppController*)GetUnityAppController
+{
+    if (!ufw) {
+        return nil;
+    }
+    
+    return [ufw appController];
+}
+
 + (void)handleAppStateDidChange:(NSNotification *)notification
 {
     if (!_isUnityReady) {
         return;
     }
-    UnityAppController* unityAppController = GetAppController();
     
+    if (![ufw appController])
+    {
+        return;
+    }
+    
+    UnityAppController* unityAppController = [ufw appController];
+
     UIApplication* application = [UIApplication sharedApplication];
-    
+
     if ([notification.name isEqualToString:UIApplicationWillResignActiveNotification]) {
         [unityAppController applicationWillResignActive:application];
     } else if ([notification.name isEqualToString:UIApplicationDidEnterBackgroundNotification]) {
@@ -130,7 +158,7 @@ static BOOL _isUnityReady = NO;
                              UIApplicationWillResignActiveNotification,
                              UIApplicationWillEnterForegroundNotification,
                              UIApplicationDidReceiveMemoryWarningNotification]) {
-        
+
         [[NSNotificationCenter defaultCenter] addObserver:self
                                                  selector:@selector(handleAppStateDidChange:)
                                                      name:name
@@ -144,39 +172,40 @@ static BOOL _isUnityReady = NO;
         completed();
         return;
     }
-    
+
     [[NSNotificationCenter defaultCenter] addObserverForName:@"UnityReady" object:nil queue:[NSOperationQueue mainQueue]  usingBlock:^(NSNotification * _Nonnull note) {
         _isUnityReady = YES;
         completed();
     }];
-    
+
     if (UnityIsInited()) {
         return;
     }
-    
+
     dispatch_async(dispatch_get_main_queue(), ^{
         UIApplication* application = [UIApplication sharedApplication];
-        
+
         // Always keep RN window in top
         UIWindow* reactNativeWindow = application.keyWindow;
-        reactNativeWindow.windowLevel = UIWindowLevelNormal + 1;
         reactNativeWindow.tag = 42;
 
         InitUnity();
         
-        UnityAppController *controller = GetAppController();
-        [controller application:application didFinishLaunchingWithOptions:nil];
-        [controller applicationDidBecomeActive:application];
+        // Lower the window level on the unity window
+        UnityAppController* controller = [UnityUtils GetUnityAppController];
+        if(controller) {
+            controller.window.windowLevel = reactNativeWindow.windowLevel - 1;
+        }
         
-        [UnityUtils listenAppState];
-
         // Make react native window key window again (changes from keywindow when unity initializes)
         [reactNativeWindow makeKeyWindow];
-
+        
+        [UnityUtils listenAppState];
     });
 }
 
-extern "C" void onUnityMessage(const char* message)
+
++ (void)onUnityMessage:(const char*)message
 {
     for (id<UnityEventListener> listener in mUnityEventListeners) {
         [listener onMessage:[NSString stringWithUTF8String:message]];
@@ -192,5 +221,6 @@ extern "C" void onUnityMessage(const char* message)
 {
     [mUnityEventListeners removeObject:listener];
 }
+
 
 @end

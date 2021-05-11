@@ -10,8 +10,6 @@
 
 @implementation UnityNativeModule
 
-@synthesize bridge = _bridge;
-
 RCT_EXPORT_MODULE(UnityNativeModule);
 
 - (id)init
@@ -66,11 +64,9 @@ RCT_EXPORT_METHOD(setKeyWindow)
 }
 
 - (void)onMessage:(NSString *)message {
-#pragma clang diagnostic push
-#pragma clang diagnostic ignored "-Wdeprecated-declarations"
-    [_bridge.eventDispatcher sendDeviceEventWithName:@"onUnityMessage"
-                                                body:message];
-#pragma clang diagnostic pop
+    [self sendEventWithName:@"onUnityMessage" body:message];
 }
+
+
 
 @end

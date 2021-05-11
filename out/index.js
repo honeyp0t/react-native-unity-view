@@ -1,5 +1,6 @@
 "use strict";
 exports.__esModule = true;
+exports.MessageHandler = exports.UnityModule = exports.UnityView = void 0;
 var UnityView_1 = require("./UnityView");
 exports.UnityView = UnityView_1["default"];
 var UnityModule_1 = require("./UnityModule");

@@ -19,10 +19,16 @@ RCT_EXPORT_MODULE(UnityView)
 {
     self.currentView = [[RNUnityView alloc] init];
     if ([UnityUtils isUnityReady]) {
-        [self.currentView setUnityView: [GetAppController() unityView]];
+        UnityAppController* controller = [UnityUtils GetUnityAppController];
+        if(controller) {
+            [self.currentView setUnityView: [controller unityView]];
+        }
     } else {
         [UnityUtils createPlayer:^{
-            [self.currentView setUnityView: [GetAppController() unityView]];
+            UnityAppController* controller = [UnityUtils GetUnityAppController];
+            if(controller) {
+                [self.currentView setUnityView: [controller unityView]];
+            }
         }];
     }
     return self.currentView;
