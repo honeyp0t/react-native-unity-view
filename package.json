@@ -1,6 +1,6 @@
 {
   "name": "react-native-unity-view",
-  "version": "1.3.3",
+  "version": "2.0.0",
   "description": "Unity view in React native",
   "homepage": "https://github.com/honeyp0t/react-native-unity-view/",
   "main": "out/index.js",
