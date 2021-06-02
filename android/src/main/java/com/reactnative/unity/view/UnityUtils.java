@@ -22,7 +22,7 @@ public class UnityUtils {
         void onReady();
     }
 
-    private static UnityPlayer unityPlayer;
+    private static UnityPlayerExtended unityPlayer;
     private static boolean _isUnityReady;
     private static boolean _isUnityPaused;
 
@@ -65,7 +65,7 @@ public class UnityUtils {
                     fullScreen = true;
                 }
 
-                unityPlayer = new UnityPlayer(activity);
+                unityPlayer = new UnityPlayerExtended(activity);
 
                 try {
                     // wait a moument. fix unity cannot start when startup.
