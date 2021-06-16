@@ -1,7 +1,8 @@
-import { DeviceEventEmitter, NativeModules, Platform } from 'react-native'
+import { NativeEventEmitter, NativeModules, Platform } from 'react-native'
 import MessageHandler, { UnityMessagePrefix } from './MessageHandler'
 
 const { UnityNativeModule } = NativeModules
+const Emitter = new NativeEventEmitter(UnityNativeModule);
 
 export interface UnityViewMessage {
   name: string
@@ -105,7 +106,7 @@ class UnityModuleImpl implements UnityModule {
   private createListeners() {
     this.stringListeners = {}
     this.unityMessageListeners = {}
-    DeviceEventEmitter.addListener('onUnityMessage', message => {
+    Emitter.addListener('onUnityMessage', message => {
       const result = handleMessage(message)
       if (result instanceof MessageHandler) {
         Object.values(this.unityMessageListeners).forEach(listener => {

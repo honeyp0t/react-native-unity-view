@@ -7,7 +7,7 @@
 //
 
 #import "RCTViewManager.h"
-#import "UnityAppController.h"
+#import <UnityFramework/UnityFramework.h>
 #import "UnityUtils.h"
 #import "RNUnityView.h"
 

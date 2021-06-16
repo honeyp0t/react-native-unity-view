@@ -1,1 +1,1 @@
-{"version":3,"file":"index.js","sourceRoot":"/Users/robin/code/opensource/react-native-unity-view/src/","sources":["index.ts"],"names":[],"mappings":";;AAAA,yCAAoC;AAOhC,oBAPG,sBAAS,CAOH;AANb,6CAA8D;AAO1D,sBAPK,yBAAW,CAOL;AANf,mDAA8C;AAO1C,yBAPG,2BAAc,CAOH;AALlB,qBAAe,sBAAS,CAAC"}
+{"version":3,"file":"index.js","sourceRoot":"./src/","sources":["index.ts"],"names":[],"mappings":";;;AAAA,yCAAoC;AAOhC,oBAPG,sBAAS,CAOH;AANb,6CAA8D;AAO1D,sBAPK,yBAAW,CAOL;AANf,mDAA8C;AAO1C,yBAPG,2BAAc,CAOH;AALlB,qBAAe,sBAAS,CAAC"}

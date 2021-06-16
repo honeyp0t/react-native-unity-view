@@ -1,29 +1,37 @@
 "use strict";
 var __extends = (this && this.__extends) || (function () {
-    var extendStatics = Object.setPrototypeOf ||
-        ({ __proto__: [] } instanceof Array && function (d, b) { d.__proto__ = b; }) ||
-        function (d, b) { for (var p in b) if (b.hasOwnProperty(p)) d[p] = b[p]; };
+    var extendStatics = function (d, b) {
+        extendStatics = Object.setPrototypeOf ||
+            ({ __proto__: [] } instanceof Array && function (d, b) { d.__proto__ = b; }) ||
+            function (d, b) { for (var p in b) if (b.hasOwnProperty(p)) d[p] = b[p]; };
+        return extendStatics(d, b);
+    };
     return function (d, b) {
         extendStatics(d, b);
         function __() { this.constructor = d; }
         d.prototype = b === null ? Object.create(b) : (__.prototype = b.prototype, new __());
     };
 })();
-var __assign = (this && this.__assign) || Object.assign || function(t) {
-    for (var s, i = 1, n = arguments.length; i < n; i++) {
-        s = arguments[i];
-        for (var p in s) if (Object.prototype.hasOwnProperty.call(s, p))
-            t[p] = s[p];
-    }
-    return t;
+var __assign = (this && this.__assign) || function () {
+    __assign = Object.assign || function(t) {
+        for (var s, i = 1, n = arguments.length; i < n; i++) {
+            s = arguments[i];
+            for (var p in s) if (Object.prototype.hasOwnProperty.call(s, p))
+                t[p] = s[p];
+        }
+        return t;
+    };
+    return __assign.apply(this, arguments);
 };
 var __rest = (this && this.__rest) || function (s, e) {
     var t = {};
     for (var p in s) if (Object.prototype.hasOwnProperty.call(s, p) && e.indexOf(p) < 0)
         t[p] = s[p];
     if (s != null && typeof Object.getOwnPropertySymbols === "function")
-        for (var i = 0, p = Object.getOwnPropertySymbols(s); i < p.length; i++) if (e.indexOf(p[i]) < 0)
-            t[p[i]] = s[p[i]];
+        for (var i = 0, p = Object.getOwnPropertySymbols(s); i < p.length; i++) {
+            if (e.indexOf(p[i]) < 0 && Object.prototype.propertyIsEnumerable.call(s, p[i]))
+                t[p[i]] = s[p[i]];
+        }
     return t;
 };
 exports.__esModule = true;
@@ -33,7 +41,6 @@ var PropTypes = require("prop-types");
 var ViewPropTypes = require('react-native').ViewPropTypes;
 var MessageHandler_1 = require("./MessageHandler");
 var UnityModule_1 = require("./UnityModule");
-var UIManager = react_native_1.NativeModules.UIManager;
 var UnityView = /** @class */ (function (_super) {
     __extends(UnityView, _super);
     function UnityView(props) {
@@ -87,9 +94,9 @@ var UnityView = /** @class */ (function (_super) {
             React.createElement(NativeUnityView, { style: { position: 'absolute', left: 0, right: 0, top: 0, bottom: 0 }, onUnityMessage: onUnityMessage, onMessage: onMessage }),
             this.props.children));
     };
-    UnityView.propTypes = __assign({}, ViewPropTypes, { onMessage: PropTypes.func });
+    UnityView.propTypes = __assign(__assign({}, ViewPropTypes), { onMessage: PropTypes.func });
     return UnityView;
 }(React.Component));
 exports["default"] = UnityView;
-var NativeUnityView = react_native_1.requireNativeComponent('UnityView', UnityView);
+var NativeUnityView = react_native_1.requireNativeComponent('UnityView');
 //# sourceMappingURL=UnityView.js.map

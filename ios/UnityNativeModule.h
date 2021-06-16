@@ -6,9 +6,9 @@
 //  Copyright © 2018 xzper. All rights reserved.
 //
 
-#import <React/RCTEventDispatcher.h>
 #import <React/RCTBridgeModule.h>
+#import <React/RCTEventEmitter.h>
 #import "UnityUtils.h"
 
-@interface UnityNativeModule : NSObject <RCTBridgeModule, UnityEventListener>
+@interface UnityNativeModule : RCTEventEmitter <RCTBridgeModule, UnityEventListener>
 @end

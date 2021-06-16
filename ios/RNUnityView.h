@@ -8,9 +8,8 @@
 
 #import <UIKit/UIKit.h>
 #import <React/UIView+React.h>
-
-#import "UnityAppController.h"
 #import "UnityUtils.h"
+#import <UnityFramework/UnityFramework.h>
 
 @interface RNUnityView : UIView
 

@@ -1,5 +1,6 @@
 "use strict";
 exports.__esModule = true;
+exports.UnityMessagePrefix = void 0;
 var react_native_1 = require("react-native");
 var UnityNativeModule = react_native_1.NativeModules.UnityNativeModule;
 exports.UnityMessagePrefix = '@UnityMessage@';
